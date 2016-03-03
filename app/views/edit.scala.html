@@ -17,7 +17,7 @@
     <div class="col-md-7">
 
         @b3.form(routes.EmployeeController.processEditForm) {
-        @b3.number( addForm("id"),'_label->"ID", 'value -> emp.id )
+        @b3.number( addForm("id"),'_label->"ID", 'value -> emp.id,'readonly -> "readonly")
         @b3.text( addForm("name"),'_label->"Name ", 'value -> emp.name )
         @b3.text( addForm("address"),'_label->"Address ", 'placeholder -> "Address",'value -> emp.address )
         @b3.text( addForm("dateOfBirth"),'_label->"Date of Birth ",'value -> emp.dateOfBirth)
@@ -31,10 +31,20 @@
 
     <div class="col-md-1"></div>
 
-    <div class="col-md-4">
-        <a href="/delete/@emp.id">
-            <button type="button" class="btn btn-danger">Delete This Employee</button>
-        </a>
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color:orange">
+                <h3 class="panel-title">Info</h3>
+            </div>
+            <div class="panel-body">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Cras vehicula ante sed diam gravida consequat.
+                In hendrerit urna a condimentum porttitor.
+                Nulla laoreet sed libero dapibus ullamcorper.
+                Curabitur mattis lacus ultricies metus porttitor congue.
+                Phasellus erat tortor, tempor at dui et, efficitur malesuada augue.
+            </div>
+        </div>
     </div>
 </div>
 

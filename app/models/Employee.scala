@@ -28,8 +28,10 @@ trait EmployeeServiceAPi {
 class EmployeeService extends EmployeeServiceAPi{
 
   val listOfEmployee:ListBuffer[Employee] = ListBuffer(
-    Employee(1,"Akash","A-24, Sec -61,Noida","20/4/1992","20/4/1992","Trainee"),
-    Employee(2,"Prabhat","A-24, Sec - 61,Noida","20/4/1992","20/4/1992","Trainee"))
+    Employee(1,"Akash Sethi","A-24, Sec -61,Noida","27/04/1992","20/04/2015","Trainee"),
+    Employee(2,"Prabhat Kashyap","A-24, Sec - 61,Noida","11/06/1992","20/04/2015","Trainee"),
+    Employee(3,"Martin Odersky","A-24, Sec - 61,Noida","27/04/1960","21/01/2008","Instructor"),
+    Employee(4,"John Marucs","XYZ-22, Twin Towers, NYC","20/4/1992","20/04/2015","VP"))
 
   override def getAllEmployee: Future[List[Employee]] = Future{
 
@@ -67,11 +69,25 @@ class EmployeeService extends EmployeeServiceAPi{
   }
 
   override def addEmpployee(employee: Employee): Boolean = {
-    listOfEmployee.+=(employee)
-    true
+    if(getEmployee(employee.id).isDefined){
+      false
+    }
+    else {
+      listOfEmployee.+=(employee)
+      true
+    }
   }
 
   override def updateEmployee(employee: Employee): Boolean = {
+    listOfEmployee foreach { emp =>
+      listOfEmployee -= emp
+      if(emp.id == employee.id){
+        listOfEmployee += employee
+      }
+      else {
+        listOfEmployee += emp
+      }
+    }
     true
   }
 

@@ -1,4 +1,4 @@
-@(searchBox: Form[String],empList:List[Employee])(implicit message:Messages)
+@(searchBox: Form[String],empList:List[Employee])(implicit flash:Flash,message:Messages)
 
 @import b3.inline.fieldConstructor
 
@@ -22,10 +22,25 @@
 <!--List-->
 
 <div class="col-md-12" style="margin-top:40px;">
+
+    @if(flash.get("error").isDefined){
+    <hr>
+    <div class="alert alert-danger">
+        <strong>Error!</strong> @flash.get("error").get.
+    </div>
+    }
+
+    @if(flash.get("success").isDefined){
+    <hr>
+    <div class="alert alert-success">
+        <strong>Success!</strong> @flash.get("success").get.
+    </div>
+    }
     <hr>
     <table class="table table-striped">
         <thead>
         <tr>
+            <th>ID</th>
             <th>Name</th>
             <th>Address</th>
             <th>Date Of Birth</th>
@@ -35,6 +50,7 @@
         </thead>
         @empList.map{ emp =>
         <tr>
+            <td>@emp.id</td>
             <td><a href="@routes.EmployeeController.showEditForm(emp.id)">@emp.name</a></td>
             <td>@emp.address</td>
             <td>@emp.dateOfBirth</td>

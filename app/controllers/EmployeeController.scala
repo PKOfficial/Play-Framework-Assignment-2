@@ -23,11 +23,11 @@ import play.api.Play.current
   * - Show List of Employee
   */
 
-class EmployeeController @Inject()(employee:EmployeeService) extends Controller {
+class EmployeeController @Inject()(employee: EmployeeService) extends Controller {
 
   /**
-  * This is Search Form
-  */
+    * This is Search Form
+    */
   val searchEmployeeForm = Form {
     single(
       "name" -> nonEmptyText
@@ -35,10 +35,10 @@ class EmployeeController @Inject()(employee:EmployeeService) extends Controller 
   }
 
   /**
-    *This function validate the Date
+    * This function validate the Date
     */
-  def validateDate(date:String):Boolean={
-    if(!date.matches(".*[a-zA-Z]+.*")) {
+  def validateDate(date: String): Boolean = {
+    if (!date.matches(".*[a-zA-Z]+.*")) {
       val df = new java.text.SimpleDateFormat("dd/MM/yyyy")
       date.equals(df.format(df.parse(date)))
     }
@@ -49,31 +49,31 @@ class EmployeeController @Inject()(employee:EmployeeService) extends Controller 
 
 
   /**
-    *This is Employee Form
+    * This is Employee Form
     */
   val employeeForm = Form {
     mapping(
-      "id" -> number,
+      "id" -> number(min=1),
       "name" -> nonEmptyText,
       "address" -> nonEmptyText,
-      "dateOfBirth" -> text.verifying("Valid Date Required",data => validateDate(data)),
-      "dateOfJoining" -> text.verifying("Valid Date Required",data => validateDate(data)),
+      "dateOfBirth" -> text.verifying("Valid Date Required", data => validateDate(data)),
+      "dateOfJoining" -> text.verifying("Valid Date Required", data => validateDate(data)),
       "designation" -> nonEmptyText
     )(Employee.apply)(Employee.unapply)
   }
 
   /**
-    *This Action is to Show The Dashboard With Employee Table Updated
+    * This Action is to Show The Dashboard With Employee Table Updated
     */
   def showDashboard = Action.async { implicit request =>
     val empList = employee.getAllEmployee
-    empList.map{employeList =>
-    Ok(views.html.index(searchEmployeeForm,employeList))
+    empList.map { employeList =>
+      Ok(views.html.index(searchEmployeeForm, employeList))
     }
   }
 
   /**
-    *This Action is to Process The Dashboard search
+    * This Action is to Process The Dashboard search
     * This action can send back bad request
     * This requect can response with aspected output
     */
@@ -85,7 +85,7 @@ class EmployeeController @Inject()(employee:EmployeeService) extends Controller 
       badForm =>
         empList.map { employeList =>
           BadRequest(views.html.index(badForm, employeList))
-      },
+        },
       employeeData => {
 
         empList.map { emplist =>
@@ -103,14 +103,14 @@ class EmployeeController @Inject()(employee:EmployeeService) extends Controller 
   }
 
   /**
-    *This Action is to Show The Add Form
+    * This Action is to Show The Add Form
     */
   def showAddForm = Action { implicit request =>
     Ok(views.html.add(employeeForm))
   }
 
   /**
-    *This Action is to Process The Add Form
+    * This Action is to Process The Add Form
     * If error found then this action populate the error
     * otherwise it redirect to dashboard
     */
@@ -123,45 +123,52 @@ class EmployeeController @Inject()(employee:EmployeeService) extends Controller 
       },
 
       employeeData => Future {
-        employee.addEmpployee(employeeData)
-        Redirect(routes.EmployeeController.showDashboard())
+        if(employee.addEmpployee(employeeData)) {
+          Redirect(routes.EmployeeController.showDashboard()).flashing("success" -> "Employee Has been Added")
+        }
+        else{
+          Redirect(routes.EmployeeController.showDashboard()).
+            flashing("error" -> "Failed to add Employee. Duplicate ID")
+        }
       }
     )
 
   }
 
   /**
-    *This Action is to Show The Edit Employee Form
+    * This Action is to Show The Edit Employee Form
     */
-  def showEditForm(emp:Int) = Action{ implicit request =>
-    Ok(views.html.edit(employeeForm,employee.getEmployee(emp).get))
+  def showEditForm(emp: Int) = Action { implicit request =>
+    Ok(views.html.edit(employeeForm, employee.getEmployee(emp).get))
   }
 
   /**
-    *This Action is to Process the Edit Form
-    *  If error found then this action populate the error
+    * This Action is to Process the Edit Form
+    * If error found then this action populate the error
     * otherwise it redirect to dashboard
     */
-  def processEditForm = Action.async{ implicit request =>
+  def processEditForm = Action.async { implicit request =>
 
     employeeForm.bindFromRequest.fold(
 
-      badForm => Future{BadRequest(views.html.add(badForm))},
+      badForm => Future {
+        BadRequest(views.html.edit(badForm, employee.getEmployee(1).get))
+      },
 
-      employeeData => Future{
-
+      employeeData => Future {
+        employee.updateEmployee(employeeData)
         Redirect(routes.EmployeeController.showDashboard())
       }
     )
   }
 
   /**
-    *This Action is to Delet The Employee
+    * This Action is to Delet The Employee
     * and Redirect to Dashboard page
     */
-  def delete(id:Int)  = Action.async{
+  def delete(id: Int) = Action.async {
     val empList = employee.getAllEmployee
-    val employeeToDelete:Employee = employee.getEmployee(id).get
+    val employeeToDelete: Employee = employee.getEmployee(id).get
     employee.deleteEmployee(employeeToDelete)
     empList.map { emplist =>
       Redirect(routes.EmployeeController.showDashboard())
