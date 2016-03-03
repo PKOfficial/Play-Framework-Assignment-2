@@ -1,0 +1,34 @@
+@(addForm: Form[Employee])(implicit message:Messages)
+
+@implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-md-2", "col-md-10") }
+
+@main("Play Framework Assignment - Add Employee") {
+
+<div class="col-md-12">
+    <div class="col-md-12">
+        <h1>Add a New Employee</h1>
+        <hr>
+    </div>
+    <div class="col-md-7">
+        @b3.form(routes.EmployeeController.processAddForm) {
+        @b3.number( addForm("id"),'_label->"ID ", 'placeholder -> "ID" )
+        @b3.text( addForm("name"),'_label->"Name ", 'placeholder -> "Name" )
+        @b3.text( addForm("address"),'_label->"Address ", 'placeholder -> "Address" )
+        @b3.text( addForm("dateOfBirth"),'_label->"Date of Birth ", 'placeholder -> "dd/mm/yyyy")
+        @b3.text( addForm("dateOfJoining"),'_label->"Date of Joining ",'placeholder -> "dd/mm/yyyy")
+        @b3.text( addForm("designation"),'_label->"Designation ", 'placeholder -> "Designation" )
+        @b3.submit('class -> "btn btn-danger"){ Add Employee}
+        }
+
+        <a href="/">Change Your Mind? Go Back</a>
+    </div>
+
+    <div class="col-md-1"></div>
+
+    <div class="col-md-4">
+        <a href="/add"><button type="button" class="btn btn-danger">Add a New Employee</button></a>
+    </div>
+</div>
+
+
+}

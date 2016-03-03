@@ -1,0 +1,27 @@
+@(title: String)(content: Html)
+
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>@title</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("css/bootstrap.min.css"))'>
+        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
+    </head>
+    <style>
+        body{
+            font-family:"Lucida Console", Monaco, monospace;
+        }
+    </style>
+    <body>
+        <div style="background-color:#772953;color:white;">
+                <p style="margin-left:40px;font-size:30px">@title</p>
+        </div>
+            @content
+            <div style="position: fixed; bottom: 0; width: 100%; background-color: #f5f5f5;">
+                <p style="margin-top:10px;margin-left:40px;font-size:1rem;color:gray;">This is my footer and I will change it later</p>
+            </div>
+    </body>
+</html>

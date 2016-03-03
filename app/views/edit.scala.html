@@ -1,0 +1,42 @@
+@(addForm: Form[Employee], emp:Employee)(implicit message:Messages)
+
+@implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-md-2", "col-md-10") }
+
+@main("Play Framework Assignment - Edit Employee") {
+
+<div class="col-md-12">
+    <div class="col-md-9">
+        <h1>Edit a Employee</h1>
+        <hr>
+    </div>
+    <div class="col-md-3" style="padding-top:20px;">
+        <a href="@routes.EmployeeController.delete(emp.id)">
+            <button type="button" class="btn btn-danger">Delete This Employee</button>
+        </a>
+    </div>
+    <div class="col-md-7">
+
+        @b3.form(routes.EmployeeController.processEditForm) {
+        @b3.number( addForm("id"),'_label->"ID", 'value -> emp.id )
+        @b3.text( addForm("name"),'_label->"Name ", 'value -> emp.name )
+        @b3.text( addForm("address"),'_label->"Address ", 'placeholder -> "Address",'value -> emp.address )
+        @b3.text( addForm("dateOfBirth"),'_label->"Date of Birth ",'value -> emp.dateOfBirth)
+        @b3.text( addForm("dateOfJoining"),'_label->"Date of Joining ",'value ->emp.dateOfJoining )
+        @b3.text( addForm("designation"),'_label->"Designation ", 'placeholder -> "Designation",'value->emp.designation)
+        @b3.submit('class -> "btn btn-danger"){ Update Employee}
+        }
+
+        <a href="/">Change Your Mind? Go Back</a>
+    </div>
+
+    <div class="col-md-1"></div>
+
+    <div class="col-md-4">
+        <a href="/delete/@emp.id">
+            <button type="button" class="btn btn-danger">Delete This Employee</button>
+        </a>
+    </div>
+</div>
+
+
+}

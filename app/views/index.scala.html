@@ -1,0 +1,54 @@
+@(searchBox: Form[String],empList:List[Employee])(implicit message:Messages)
+
+@import b3.inline.fieldConstructor
+
+@main("Play Framework Assignment") {
+
+<div class="col-md-12">
+    <div class="col-md-4">
+        @b3.form(routes.EmployeeController.processSearchForm) {
+        @b3.text( searchBox("name"), 'placeholder -> "Name" )
+        @b3.submit('class -> "btn btn-danger"){ Search}
+        }
+    </div>
+
+    <div class="col-md-4"></div>
+
+    <div class="col-md-4 pull-right">
+        <a href="/add"><button type="button" class="btn btn-danger">Add a New Employee</button></a>
+    </div>
+</div>
+
+<!--List-->
+
+<div class="col-md-12" style="margin-top:40px;">
+    <hr>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Date Of Birth</th>
+            <th>Date Of Joining</th>
+            <th>Designation</th>
+        </tr>
+        </thead>
+        @empList.map{ emp =>
+        <tr>
+            <td><a href="@routes.EmployeeController.showEditForm(emp.id)">@emp.name</a></td>
+            <td>@emp.address</td>
+            <td>@emp.dateOfBirth</td>
+            <td>@emp.dateOfJoining</td>
+            <td>@emp.designation</td>
+        </tr>
+        }
+        </tbody>
+
+    </table>
+    @if(empList.isEmpty){
+    No Employee Found
+    }
+    <hr>
+</div>
+
+}
