@@ -80,12 +80,12 @@ class EmployeeService extends EmployeeServiceAPi{
 
   override def updateEmployee(employee: Employee): Boolean = {
     listOfEmployee foreach { emp =>
-      listOfEmployee -= emp
+      listOfEmployee.-=(emp)
       if(emp.id == employee.id){
-        listOfEmployee += employee
+        listOfEmployee.+=(employee)
       }
       else {
-        listOfEmployee += emp
+        listOfEmployee.+=(emp)
       }
     }
     true
