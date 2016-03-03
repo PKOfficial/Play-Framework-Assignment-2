@@ -3,10 +3,13 @@ package models
 import com.google.inject.ImplementedBy
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 
 /**
-  * Created by akash on 3/3/16.
+  * This contain The Case Class of Employee
+  * A Trait for Method Declaration
+  * Google Juice
+  * class that implement the trait
   */
 
 case class Employee(id:Int,name:String,address:String,dateOfBirth:String,dateOfJoining:String,designation:String)
@@ -19,11 +22,14 @@ trait EmployeeServiceAPi {
   def getEmployeeByName(name:String):List[Employee]
   def deleteEmployee(employee: Employee):Boolean
   def addEmpployee(employee: Employee):Boolean
+  def updateEmployee(employee:Employee):Boolean
 }
 
 class EmployeeService extends EmployeeServiceAPi{
 
-  val listOfEmployee:ListBuffer[Employee] = ListBuffer(Employee(1,"Akash","A-24, Sec -61,Noida","20/4/1992","20/4/1992","Trainee"),Employee(2,"Prabhat","A-24, Sec - 61,Noida","20/4/1992","20/4/1992","Trainee"))
+  val listOfEmployee:ListBuffer[Employee] = ListBuffer(
+    Employee(1,"Akash","A-24, Sec -61,Noida","20/4/1992","20/4/1992","Trainee"),
+    Employee(2,"Prabhat","A-24, Sec - 61,Noida","20/4/1992","20/4/1992","Trainee"))
 
   override def getAllEmployee: Future[List[Employee]] = Future{
 
@@ -64,4 +70,9 @@ class EmployeeService extends EmployeeServiceAPi{
     listOfEmployee.+=(employee)
     true
   }
+
+  override def updateEmployee(employee: Employee): Boolean = {
+    true
+  }
+
 }

@@ -1,18 +1,16 @@
 import controllers.EmployeeController
 import models.{Employee, EmployeeService}
 import org.junit.runner.RunWith
+import org.mockito.Mockito._
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
-import play.api.test._
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.test.Helpers._
-import scala.concurrent.{Await, Future}
-import org.mockito.Mockito._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
-/**
-  * Created by prabhat on 3/3/16.
-  */
+import play.api.test._
+
+import scala.concurrent.Future
+
 @RunWith(classOf[JUnitRunner])
 class DashboardSpec extends Specification with Mockito {
 
@@ -62,7 +60,11 @@ class DashboardSpec extends Specification with Mockito {
   }
   "Add the Wrong Employee" in new WithApplication {
     val search = route(FakeRequest(POST, "/addemployee").withFormUrlEncodedBody("id" -> "3","name" -> "","address" -> "Noidas","dateOfBirth" ->"12/12/1990","dateOfJoining" -> "12/12/2015","designation" -> "UP"))
-    status(search.get) must equalTo(OK)
+    status(search.get) must equalTo(BAD_REQUEST)
+  }
+  "Add the Employee with  Wrong Date" in new WithApplication {
+    val search = route(FakeRequest(POST, "/addemployee").withFormUrlEncodedBody("id" -> "3","name" -> "akash","address" -> "Noidas","dateOfBirth" ->"12/123/1990","dateOfJoining" -> "12/123/2015","designation" -> "UP"))
+    status(search.get) must equalTo(BAD_REQUEST)
   }
   "Show the Edit Page " in new WithApplication {
     val add = route(FakeRequest(GET, "/edit/1")).get
@@ -73,6 +75,10 @@ class DashboardSpec extends Specification with Mockito {
   "Edit the  Employee" in new WithApplication {
     val edit = route(FakeRequest(POST, "/editemployee").withFormUrlEncodedBody("id" -> "3","name" -> "Akash","address" -> "Noidas","dateOfBirth" ->"12/12/1990","dateOfJoining" -> "12/12/2015","designation" -> "UP"))
     status(edit.get) must equalTo(SEE_OTHER)
+  }
+  "Edit the Wrong Date with  Employee" in new WithApplication {
+    val search = route(FakeRequest(POST, "/editemployee").withFormUrlEncodedBody("id" -> "3","name" -> "","address" -> "Noidas","dateOfBirth" ->"12/124/1990","dateOfJoining" -> "12/12/2015","designation" -> "UP"))
+    status(search.get) must equalTo(BAD_REQUEST)
   }
   "Edit the  Employee with Wrong Value" in new WithApplication {
     val edit = route(FakeRequest(POST, "/editemployee").withFormUrlEncodedBody("id" -> "3","name" -> "","address" -> "Noidas","dateOfBirth" ->"12/12/1990","dateOfJoining" -> "12/12/2015","designation" -> "UP"))

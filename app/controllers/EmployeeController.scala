@@ -6,11 +6,11 @@ import play.api.mvc.{Action, Controller}
 import play.api.data.Forms._
 import com.google.inject.Inject
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+
 /**
-  * Created by akash on 3/3/16.
   * This Controller contails all the action needed
   * This controller contains functinallity for
   * - show DashBoard
@@ -25,14 +25,29 @@ import play.api.Play.current
 
 class EmployeeController @Inject()(employee:EmployeeService) extends Controller {
 
-/**
+  /**
   * This is Search Form
   */
   val searchEmployeeForm = Form {
     single(
-      "name" -> text
+      "name" -> nonEmptyText
     )
   }
+
+  /**
+    *This function validate the Date
+    */
+  def validateDate(date:String):Boolean={
+    if(!date.matches(".*[a-zA-Z]+.*")) {
+      val df = new java.text.SimpleDateFormat("dd/MM/yyyy")
+      date.equals(df.format(df.parse(date)))
+    }
+    else {
+      false
+    }
+  }
+
+
   /**
     *This is Employee Form
     */
@@ -48,17 +63,6 @@ class EmployeeController @Inject()(employee:EmployeeService) extends Controller 
   }
 
   /**
-    *This function validate the String for Date
-    */
-  def validateDate(date:String):Boolean={
-    if(!date.matches(".*[a-zA-Z]+.*")) {
-      val df = new java.text.SimpleDateFormat("dd/MM/yyyy")
-      date.equals(df.format(df.parse(date)))
-    }
-    else false
-  }
-
-  /**
     *This Action is to Show The Dashboard With Employee Table Updated
     */
   def showDashboard = Action.async { implicit request =>
@@ -68,6 +72,11 @@ class EmployeeController @Inject()(employee:EmployeeService) extends Controller 
     }
   }
 
+  /**
+    *This Action is to Process The Dashboard search
+    * This action can send back bad request
+    * This requect can response with aspected output
+    */
   def processSearchForm = Action.async { implicit request =>
     val empList = employee.getAllEmployee
 
@@ -93,16 +102,24 @@ class EmployeeController @Inject()(employee:EmployeeService) extends Controller 
 
   }
 
+  /**
+    *This Action is to Show The Add Form
+    */
   def showAddForm = Action { implicit request =>
     Ok(views.html.add(employeeForm))
   }
 
+  /**
+    *This Action is to Process The Add Form
+    * If error found then this action populate the error
+    * otherwise it redirect to dashboard
+    */
   def processAddForm = Action.async { implicit request =>
 
     employeeForm.bindFromRequest.fold(
 
       badForm => Future {
-        Ok(views.html.add(badForm))
+        BadRequest(views.html.add(badForm))
       },
 
       employeeData => Future {
@@ -113,10 +130,18 @@ class EmployeeController @Inject()(employee:EmployeeService) extends Controller 
 
   }
 
+  /**
+    *This Action is to Show The Edit Employee Form
+    */
   def showEditForm(emp:Int) = Action{ implicit request =>
     Ok(views.html.edit(employeeForm,employee.getEmployee(emp).get))
   }
 
+  /**
+    *This Action is to Process the Edit Form
+    *  If error found then this action populate the error
+    * otherwise it redirect to dashboard
+    */
   def processEditForm = Action.async{ implicit request =>
 
     employeeForm.bindFromRequest.fold(
@@ -130,6 +155,10 @@ class EmployeeController @Inject()(employee:EmployeeService) extends Controller 
     )
   }
 
+  /**
+    *This Action is to Delet The Employee
+    * and Redirect to Dashboard page
+    */
   def delete(id:Int)  = Action.async{
     val empList = employee.getAllEmployee
     val employeeToDelete:Employee = employee.getEmployee(id).get
