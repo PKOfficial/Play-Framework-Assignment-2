@@ -76,12 +76,13 @@ class EmployeeControllerSpec extends Specification with Mockito {
     contentAsString(add) must contain("Edit")
   }
 
-//  "Edit the Employee" in new WithApplication {
-//    val edit = route(FakeRequest(POST, "/editemployee").
-//      withFormUrlEncodedBody("id" -> "1","name" -> "Akash","address" -> "Noidas",
-//        "dateOfBirth" ->"12/12/1990","dateOfJoining" -> "12/12/2015","designation" -> "UP"))
-//    status(edit.get) must equalTo(SEE_OTHER)
-//  }
+  "Edit the Employee" in new WithApplication {
+    when(services.updateEmployee(Employee(1,"Akash","Noida","24/03/1993","21/01/2016","Good")))
+      .thenReturn(true)
+    val edit = call(controllerObj.showDashboard,FakeRequest(POST,"/editemployee"))
+    status(edit) must equalTo(OK)
+    contentType(edit) must beSome.which(_ == "text/html")
+  }
 
   "Edit the Wrong Date with  Employee" in new WithApplication {
     val search = route(FakeRequest(POST, "/editemployee").
